@@ -13,7 +13,7 @@ parser_test.o: parser_test.cpp
 	$(CC) $(FLAGS) -c parser_test.cpp
 
 test:
-	./allocator
+	./parser
 
 clean:
 	rm -f *.o parser

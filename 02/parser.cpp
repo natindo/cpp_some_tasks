@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "parser.h"
 
 void TokenParser::SetStartCallback(const std::function<void()>& callback) {
@@ -21,13 +22,16 @@ void TokenParser::Parse(const std::string& input) {
     if (StartCallback != nullptr)
         StartCallback();
 
-    for (auto token : input) {
-        if (TokenParser::isNumber(&token))
+    std::istringstream stream(input);
+    std::string token;
+    while (stream >> token) {
+        if (TokenParser::isNumber(token)) {
             if (DigitTokenCallback != nullptr)
-                DigitTokenCallback(&token);
-
-        if (StringTokenCallback != nullptr)
-            StringTokenCallback(&token);
+                DigitTokenCallback(token);
+        } else {
+            if (StringTokenCallback != nullptr)
+                StringTokenCallback(token);
+        }
     }
 
     if (EndCallback != nullptr)
@@ -39,8 +43,15 @@ bool TokenParser::isNumber(const std::string& token) {
         return false;
 
     for (auto c : token) {
-        if (!isdigit(c))
+        if (!std::isdigit(c))
             return false;
+    }
+    try {
+        uint64_t result = std::stoull(token);
+    } catch (const std::invalid_argument&) {
+        return false;
+    } catch (const std::out_of_range&) {
+        return false;
     }
     return true;
 }

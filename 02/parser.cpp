@@ -57,20 +57,20 @@ bool TokenParser::isNumber(const std::string& token) {
 }
 
 
-int main()
-{
-    TokenParser parser;
-    parser.SetDigitTokenCallback([](const std::string& token) {
-        std::cout << "Digit token: " << token << "\n";
-    });
+// int main()
+// {
+//     TokenParser parser;
+//     parser.SetDigitTokenCallback([](const std::string& token) {
+//         std::cout << "Digit token: " << token << "\n";
+//     });
 
-    parser.SetStringTokenCallback([](const std::string& token) {
-        std::cout << "String token: " << token << "\n";
-    });
+//     parser.SetStringTokenCallback([](const std::string& token) {
+//         std::cout << "String token: " << token << "\n";
+//     });
 
 
-    std::string line;
-    while (std::getline(std::cin, line)) {
-        parser.Parse(line);
-    }
-}
+//     std::string line;
+//     while (std::getline(std::cin, line)) {
+//         parser.Parse(line);
+//     }
+// }

@@ -30,6 +30,39 @@ TEST(matrix_test, simpleTest) {
     ASSERT_EQ(ss1.str(), expected1);
 }
 
+TEST(matrix_test, emptyMatrix) {
+    Matrix m(0, 0);
+    ASSERT_EQ(m.getCols(), 0);
+    ASSERT_EQ(m.getRows(), 0);
+    ASSERT_THROW(m[4][1], std::out_of_range);
+    std::stringstream ss;
+    ss << m;
+    std::string expected = "";
+    ASSERT_EQ(ss.str(), expected);
+}
+
+TEST(matrix_test, multMatrixByNumber) {
+    Matrix m(2, 2);
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            m[i][j] = i + j;
+        }
+    }
+    m *= 2;
+    std::stringstream ss;
+    ss << m;
+    std::string expected = "0  2  \n2  4  \n";
+    ASSERT_EQ(ss.str(), expected);
+
+    Matrix m1(2, 2);
+    for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            m[i][j] = i + j;
+        }
+    }
+    ASSERT_FALSE(m1 == m);
+}
+
 int main(int argc, char** argv) {
    testing::InitGoogleTest(&argc, argv);
    return RUN_ALL_TESTS();

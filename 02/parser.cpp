@@ -48,7 +48,7 @@ bool TokenParser::isNumber(const std::string& token) {
             return false;
     }
     try {
-        uint64_t result = std::stoull(token);
+        std::stoull(token);
     } catch (const std::invalid_argument&) {
         return false;
     } catch (const std::out_of_range&) {

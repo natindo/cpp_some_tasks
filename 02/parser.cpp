@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <functional>
 #include "parser.h"
 
 void TokenParser::SetStartCallback(const std::function<void()>& callback) {

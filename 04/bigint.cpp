@@ -38,23 +38,24 @@ char BigInt::getNumber(size_t position) const {
     return (*number)[position];
 }
 
-BigInt& BigInt::operator+(const BigInt& rhs) {
+BigInt& BigInt::operator+(const BigInt& rhs) const {
     int carry = 0;
-    size_t position = (rhs.getNumber().cend() - rhs.getNumber().cbegin()) / sizeof(char);
-    // std::cout << position << std::endl;
+    size_t position = (rhs.getNumber().cend() - rhs.getNumber().cbegin()) - 1;
+    std::cout << position << std::endl;
+    BigInt result; // RETURN LOCAL STACK VALUE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    for (auto it = rhs.getNumber().cend(); it != rhs.getNumber().cbegin(); --it) {
-        int tempLHS = static_cast<int>(this->getNumber(position));
-        int tempRHS = static_cast<int>(*it);
+    for (auto it = rhs.getNumber().crbegin(); it != rhs.getNumber().crend(); ++it) {
+        int tempLHS = this->getNumber(position) - '0';
+        int tempRHS = *it - '0';
 
         int sum = tempLHS + tempRHS + carry;
         carry = sum / 10;
         int current = sum % 10;
-        (*this->number)[position] = current;        
+        (result.number)[position] = current;        
         
         position--;
     }
-    return *this;
+    return result;
 }
 
 void BigInt::operator=(const BigInt& rhs) {
@@ -72,14 +73,14 @@ BigInt::~BigInt() {
 
 int main () {
     BigInt a (1);
-    BigInt b ("123456789012345678901234567890");
+    BigInt b ("123");
     BigInt c;
 
     std::cout << a << std::endl;
     std::cout << b << std::endl;
     std::cout << c << std::endl;
 
-    std::cout << b + a << std :: endl;
+    std::cout << a + b << std :: endl;
 
     return 0;
 }

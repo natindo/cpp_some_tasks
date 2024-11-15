@@ -11,7 +11,7 @@ public:
     BigInt(int32_t input);
 
     std::string& getNumber() const;
-    BigInt& operator+(const BigInt&);
+    BigInt& operator+(const BigInt&) const;
     void operator=(const BigInt&);
     friend std::ostream& operator<<(std::ostream& out, std::string number);
 

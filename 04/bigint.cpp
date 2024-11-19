@@ -39,23 +39,28 @@ char BigInt::getNumber(size_t position) const {
 }
 
 BigInt& BigInt::operator+(const BigInt& rhs) const {
-    int carry = 0;
-    size_t position = (rhs.getNumber().cend() - rhs.getNumber().cbegin()) - 1;
-    std::cout << position << std::endl;
-    BigInt result; // RETURN LOCAL STACK VALUE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    for (auto it = rhs.getNumber().crbegin(); it != rhs.getNumber().crend(); ++it) {
-        int tempLHS = this->getNumber(position) - '0';
-        int tempRHS = *it - '0';
+    try {
+        int carry = 0;
+        size_t position = (rhs.getNumber().cend() - rhs.getNumber().cbegin()) - 1;
+        std::cout << position << std::endl;
+        BigInt* value = new BigInt();
+        for (auto it = rhs.getNumber().crbegin(); it != rhs.getNumber().crend(); ++it) {
+            int tempLHS = this->getNumber(position) - '0';
+            int tempRHS = *it - '0';
 
-        int sum = tempLHS + tempRHS + carry;
-        carry = sum / 10;
-        int current = sum % 10;
-        (result.number)[position] = current;        
-        
-        position--;
+            int sum = tempLHS + tempRHS + carry;
+            carry = sum / 10;
+            int current = sum % 10;
+            (value->number)[position] = current;        
+            
+            position--;
+        }
+        return *value;
+    } catch (std::bad_alloc const&) {
+        std::cout << "some problem with memory, error in operation plus" << std::endl;
+        return *this;
     }
-    return result;
 }
 
 void BigInt::operator=(const BigInt& rhs) {

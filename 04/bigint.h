@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <ostream>
 #include <string>
 
@@ -7,19 +8,26 @@ class BigInt {
 public:
 
     BigInt();
-    BigInt(std::string input);
     BigInt(int32_t input);
+    BigInt(std::string input);
+    BigInt(const BigInt& rhs);
+    BigInt(BigInt&& rhs);
 
-    std::string& getNumber() const;
-    BigInt& operator+(const BigInt&) const;
-    void operator=(const BigInt&);
+    BigInt operator=(const BigInt& rhs);
+    //<> operator=(BigInt&& rhs);
+
+    BigInt& operator+(const BigInt& rhs) const;
+    //BigInt& operator+(BigInt&& rhs) const;
+
+    const std::string& getNumber() const;
+    
     friend std::ostream& operator<<(std::ostream& out, std::string number);
 
     ~BigInt();
 
 private:
-    char getNumber(size_t position) const;
+    char* digit;
+    size_t size;
 
-private:
-    std::string *number = 0;
+    void allocate(size_t newSize);
 };

@@ -1,16 +1,12 @@
 #include "bigint.h"
+#include <cstddef>
 #include <iostream>
 #include <iterator>
 #include <new>
+#include <cstring>
 #include <string>
 
-BigInt::BigInt() {
-    try {
-        number = new std::string();
-    } catch (std::bad_alloc const&) {
-        std::cout << "some problem with memory" << std::endl;
-    }
-}
+BigInt::BigInt() : digit(nullptr), size(0) {}
 
 BigInt::BigInt(int32_t input) {
     try {
@@ -59,7 +55,7 @@ BigInt& BigInt::operator+(const BigInt& rhs) const {
         return *value;
     } catch (std::bad_alloc const&) {
         std::cout << "some problem with memory, error in operation plus" << std::endl;
-        return *this;
+        return ;
     }
 }
 

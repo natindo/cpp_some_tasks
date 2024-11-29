@@ -6,28 +6,41 @@
 class BigInt {
 
 public:
-
     BigInt();
     BigInt(int32_t input);
-    BigInt(std::string input);
+    BigInt(const std::string& input);
     BigInt(const BigInt& rhs);
     BigInt(BigInt&& rhs);
 
-    BigInt operator=(const BigInt& rhs);
-    //<> operator=(BigInt&& rhs);
+    BigInt& operator=(const BigInt& rhs);
+    BigInt& operator=(BigInt&& rhs);
 
-    BigInt& operator+(const BigInt& rhs) const;
-    //BigInt& operator+(BigInt&& rhs) const;
+    BigInt operator+(const BigInt& rhs) const;
+    // BigInt operator+(const int32_t rhs) const;
+    BigInt operator*(const BigInt& rhs) const;
+    // BigInt operator*(const int32_t rhs) const;
+    BigInt operator-() const;
+    BigInt operator-(const BigInt& rhs) const;
+    BigInt operator-(const int32_t rhs) const;
 
-    const std::string& getNumber() const;
-    
-    friend std::ostream& operator<<(std::ostream& out, std::string number);
+    // bool operator==(const BigInt& rhs) const;
+    // bool operator!=(const BigInt& rhs) const;
+    // bool operator<(const BigInt& rhs) const;
+    // bool operator<=(const BigInt& rhs) const;
+    // bool operator>(const BigInt& rhs) const;
+    // bool operator>=(const BigInt& rhs) const;
+
+    friend std::ostream& operator<<(std::ostream& out, const BigInt& bigint);
 
     ~BigInt();
 
 private:
-    char* digit;
-    size_t size;
-
     void allocate(size_t newSize);
+    void deallocate();
+    void copy(const BigInt& rhs);
+
+private:
+    char* digit_;
+    size_t size_;
+    bool isNegative_;
 };

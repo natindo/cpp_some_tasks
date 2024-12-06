@@ -1,13 +1,11 @@
 #pragma once
-
+#include "error.h"
 #include <cstdint>
 #include <ostream>
 
-enum class Error { NoError,
-    CorruptedArchive };
-
 class Serializer {
     static constexpr char Separator = ' ';
+    std::ostream& out_;
 
 public:
     explicit Serializer(std::ostream& out)
@@ -16,42 +14,45 @@ public:
     }
 
     template <class T>
-    Error save(T& object) { return object.serialize(*this); }
+    Error save(T& object)
+    {
+        return object.serialize(*this);
+    }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args)
+    Error operator()(ArgsT&&... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
-    Error process(bool&& arg);
-    Error process(uint64_t&& arg);
 
 private:
-    // process использует variadic templates
-    <> out_;
-};
-
-class Deserializer {
-    static constexpr char Separator = ' ';
-
-public:
-    explicit Deserializer(std::ostream& in)
-        : in_(in)
+    Error process()
     {
+        return Error::NoError;
     }
 
-    template <class T>
-    Error load(T& object) { return object.deserializer(*this); }
-
-    template <class... ArgsT>
-    Error operator()(ArgsT... args)
+    template <class T, class... Args>
+    Error process(T&& val, Args&&... args)
     {
-        return process(args...);
-    }
-    Error process(bool&& arg);
-    Error process(uint64_t&& arg);
+        Error err = save_value(std::forward<T>(val));
+        if (err != Error::NoError)
+            return err;
 
-private:
-    // process использует variadic templates
-    <> in_;
+        if constexpr (sizeof...(Args) > 0)
+            out_ << Separator;
+
+        return process(std::forward<Args>(args)...);
+    }
+
+    Error save_value(uint64_t val)
+    {
+        out_ << val;
+        return Error::NoError;
+    }
+
+    Error save_value(bool val)
+    {
+        out_ << (val ? "true" : "false");
+        return Error::NoError;
+    }
 };

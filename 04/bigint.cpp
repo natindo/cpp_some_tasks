@@ -73,6 +73,16 @@ void BigInt::deallocate() {
     size_ = 0;
 }
 
+int BigInt::compareAbs(const BigInt& rhs) const {
+    if (size_ > rhs.size_) return 1;
+    if (size_ < rhs.size_) return -1;
+    for (size_t i = size_; i > 0; --i) {
+        if (digit_[i - 1] > rhs.digit_[i - 1]) return 1;
+        if (digit_[i - 1] < rhs.digit_[i - 1]) return -1;
+    }
+    return 0;
+}
+
 BigInt& BigInt::operator=(const BigInt& rhs) {
     if (this != &rhs) {
         copy(rhs);
@@ -192,8 +202,67 @@ BigInt BigInt::operator+(const BigInt& rhs) const {
     return result;
 }
 
+BigInt BigInt::operator-(const BigInt& rhs) const {
+    if (isNegative_ != rhs.isNegative_) {
+        BigInt result = (*this) + (-rhs);
+        result.isNegative_ = isNegative_;
+        return result;
+    }
+
+    int cmp = compareAbs(rhs);
+    if (cmp == 0) {
+        return BigInt(0);
+    }
+
+    const BigInt *minuend = this;
+    const BigInt *subtrahend = &rhs;
+    bool resultNegative = false;
+
+    if (cmp < 0) {
+        std::swap(minuend, subtrahend);
+        resultNegative = !isNegative_;
+    } else {
+        resultNegative = isNegative_;
+    }
+
+    size_t resultSize = minuend->size_;
+    char* resultString = new char[resultSize];
+    int borrow = 0;
+
+    for (size_t i = 0; i < resultSize; ++i) {
+        int tempMinuend = minuend->digit_[i] - '0';
+        int tempSubtrahend = i < subtrahend->size_ ? subtrahend->digit_[i] - '0' : 0;
+
+        int diff = tempMinuend - tempSubtrahend - borrow;
+        if (diff < 0) {
+            diff += 10;
+            borrow = 1;
+        } else {
+            borrow = 0;
+        }
+
+        resultString[i] = diff + '0';
+    }
+
+    size_t actualSize = resultSize;
+    while (actualSize > 1 && resultString[actualSize - 1] == '0') {
+        --actualSize;
+    }
+
+    BigInt result;
+    result.isNegative_ = resultNegative;
+    result.allocate(actualSize);
+    std::memcpy(result.digit_, resultString, actualSize * sizeof(char));
+    result.size_ = actualSize;
+
+    delete[] resultString;
+    return result;
+}
+
+
 BigInt BigInt::operator-(const int32_t rhs) const {
-    
+    BigInt rhsBigInt(rhs);
+    return (*this) - rhsBigInt;
 }
 
 std::ostream& operator<<(std::ostream& out, const BigInt& bigint) {
@@ -207,11 +276,32 @@ BigInt::~BigInt() {
     deallocate();
 }
 
-int main () {
-    BigInt a = 1;
-    BigInt b("123456789012345678901234567890");
-    BigInt c = b * 2;
-    std::cout << c << std::endl;
+
+BigInt createBigInt() {
+    BigInt temp("987654321098765432109876543210");
+    return temp; // Здесь будет использован конструктор перемещения
+}
+
+int main() {
+    BigInt a(1);
+    BigInt b("12345678901234567890");
+    BigInt c("98765432109876543210");
+
+    std::cout << "a = " << a << std::endl;
+    std::cout << "b = " << b << std::endl;
+    std::cout << "c = " << c << std::endl;
+
+    BigInt d = a + b;
+    // std::cout << "a + b = " << d << std::endl;
+
+    BigInt e = std::move(d);
+    std::cout << "e = " << e << std::endl;
+
+    // c = std::move(e);
+    // std::cout << "c (after move) = " << c << std::endl;
+
+    // BigInt f = b * c;
+    // std::cout << "b * c = " << f << std::endl;
 
     return 0;
 }

@@ -38,6 +38,7 @@ private:
     void allocate(size_t newSize);
     void deallocate();
     void copy(const BigInt& rhs);
+    int compareAbs(const BigInt& rhs) const;
 
 private:
     char* digit_;

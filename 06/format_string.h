@@ -1,10 +1,10 @@
-#include <cassert>
-#include <functional>
 #include <iostream>
+#include <vector>
+#include <functional>
 #include <string>
+#include <cassert>
 #include <sstream>
 #include <utility>
-#include <vector>
 
 class FormatException : public std::runtime_error {
 public:

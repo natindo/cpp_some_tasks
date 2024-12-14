@@ -4,19 +4,22 @@ FLAGS=-std=c++20 -Wall -Werror -Wextra -Wpedantic
 FLAGS_ASAN=-fsanitize=address -fsanitize=leak
 FLAGS_TEST=-lgtest_main -lgtest -lpthread
 
-all: bigint_test.o bigint.o
-	$(CC) $(FLAGS) $(FLAGS_ASAN) bigint.o bigint_test.o -o bigint $(FLAGS_TEST)
+TARGET=bigint.o
+TARGET_TEST=bigint_test.o
 
-valgrind: bigint_test.o bigint.o
-	$(CC) $(FLAGS) bigint.o bigint_test.o -o bigint $(FLAGS_TEST)
+all: $(TARGET) $(TARGET_TEST)
+	$(CC) $(FLAGS) $(FLAGS_ASAN) $(TARGET) $(TARGET_TEST) -o bigint $(FLAGS_TEST)
 
-bigint.o : bigint.cpp
+valgrind: $(TARGET) $(TARGET_TEST)
+	$(CC) $(FLAGS) $(TARGET) $(TARGET_TEST) -o bigint $(FLAGS_TEST)
+
+$(TARGET) : bigint.cpp
 	$(CC) $(FLAGS) -c bigint.cpp
 
-bigint_test.o: bigint_test.cpp
+$(TARGET_TEST): bigint_test.cpp
 	$(CC) $(FLAGS) -c bigint_test.cpp
 
-test:
+test: all
 	./bigint
 
 clean:

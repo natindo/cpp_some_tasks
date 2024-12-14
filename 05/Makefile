@@ -15,7 +15,7 @@ valgrind: $(TARGET_TEST)
 $(TARGET_TEST): serializer_test.cpp
 	$(CC) $(FLAGS) -c serializer_test.cpp
 
-test:
+test: all
 	./serializer
 
 clean:

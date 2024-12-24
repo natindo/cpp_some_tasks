@@ -19,7 +19,7 @@ $(TARGET) : format.cpp
 $(TARGET_TEST): format_test.cpp
 	$(CC) $(CFLAGS) -c format_test.cpp
 
-test:
+test: all
 	./format
 
 clean:
